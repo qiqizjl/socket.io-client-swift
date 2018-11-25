@@ -46,9 +46,17 @@ struct SocketStringReader {
     }
     
     mutating func read(count: Int) -> String {
-        let readString = message[currentIndex..<message.characters.index(currentIndex, offsetBy: count)]
+        //fix for golang Server
+        // let readString = message[currentIndex..<message.characters.index(currentIndex, offsetBy: count)]
         
-        advance(by: count)
+        // advance(by: count)
+        let currentPosition = message.distance(from: message.startIndex, to: currentIndex)
+        let totalLength = message.distance(from: message.startIndex, to: message.endIndex)
+        let maxCount = min(count, totalLength - currentPosition)
+        
+        let readString = message[currentIndex..<message.characters.index(currentIndex, offsetBy: maxCount)]
+        
+        advance(by: maxCount)
         
         return readString
     }
